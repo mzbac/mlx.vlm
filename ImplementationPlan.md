@@ -11,7 +11,7 @@
 *   **`MLXLMCommon` Integration:** Utilize base classes and protocols from `MLXLMCommon`.
 *   **Reference Codebase:** The primary reference for VLM structures and porting logic is `https://github.com/ml-explore/mlx-swift-examples.git`.
 *   **MLX Issues:** If MLX-specific issues arise (e.g., Metal integration, tensor operations), consult the official MLX Swift repository: `https://github.com/ml-explore/mlx-swift.git`.
-*   **Verification:** Use `xcodebuild` for compilation and testing. Example build command: `xcodebuild build -scheme mlx_vlm -destination 'platform=OS X'`. Example test command: `xcodebuild test -scheme mlx_vlm-Package -destination 'platform=OS X'` (Note: Scheme names like `mlx_vlm-Package` are common for package products in Xcode; adjust if your scheme for tests is different, e.g., just `mlx_vlm` if testing the library target directly).
+*   **Verification:** Use `xcodebuild` for compilation and testing. Example build command: `xcodebuild build -scheme mlx_vlm -destination 'platform=OS X'`. Example test command: `xcodebuild test -scheme mlx_vlm -destination 'platform=OS X'` (Note: Scheme names like `mlx_vlm` are common for package products in Xcode; adjust if your scheme for tests is different, e.g., just `mlx_vlm` if testing the library target directly).
 
 ---
 
@@ -20,8 +20,8 @@
 **Step 1.0: Initialize the `mlx_vlm` Swift Package & Xcode Project**
 -   **Objective:** Create the basic SPM project structure and generate an Xcode project.
 -   **Agent Instruction (to User/Copilot):**
-    1.  "Create a new directory named `mlx_vlm_library_root` (or similar to avoid conflict with the target name if the directory is also named `mlx_vlm`)."
-    2.  "Navigate into this `mlx_vlm_library_root` directory and execute `swift package init --type library --name mlx_vlm`." (This sets the library product name).
+    1.  "Create a new directory named `mlx_vlm` (or similar to avoid conflict with the target name if the directory is also named `mlx_vlm`)."
+    2.  "Navigate into this `mlx_vlm` directory and execute `swift package init --type library --name mlx_vlm`." (This sets the library product name).
     3.  "Open the generated `Package.swift` file."
     4.  "In `Package.swift`, ensure the library name in `products` is `mlx_vlm` and the target name in `targets` is also `mlx_vlm` (by default `swift package init` will name the target `mlx_vlm` if the package name is `mlx_vlm`)."
         ```swift
@@ -43,23 +43,24 @@
         ]
         // ...
         ```
-    5.  "Declare the Swift tools version at the top, e.g., `// swift-tools-version:5.9`."
-    6.  "Define the `platforms` for your package, e.g., `.macOS(.v13)`."
+    5.  "Declare the Swift tools version at the top, e.g., `// swift-tools-version:6.0`."
+    6.  "Define the `platforms` for your package, e.g., `platforms: [.macOS(.v14), .iOS(.v16)],`."
     7.  "In the `dependencies` array of the `Package` object, add the following:"
-        *   `.package(url: "https://github.com/ml-explore/mlx-swift.git", branch: "main")`
-        *   `.package(url: "https://github.com/huggingface/swift-tokenizers.git", branch: "main")`
-        *   "If `MLXLMCommon` is a local package: `.package(name: "MLXLMCommon", path: "../MLXLMCommon")`."
+        *   `.package(url: "https://github.com/ml-explore/mlx-swift", .upToNextMinor(from: "0.21.2"))`
+        *   `.package(url: "https://github.com/huggingface/swift-transformers", .upToNextMinor(from: "0.1.20"))`
+        *   `.package(url: "https://github.com/ml-explore/mlx-swift-examples/", branch: "main")`,
+
     8.  "In the `targets` array, for the `.target(name: "mlx_vlm", ...)` target, add its `dependencies`:"
         *   `.product(name: "MLX", package: "mlx-swift")`
         *   `.product(name: "MLXNN", package: "mlx-swift")`
         *   `.product(name: "MLXOptimizers", package: "mlx-swift")`
         *   `.product(name: "MLXRandom", package: "mlx-swift")`
         *   `.product(name: "MLXFast", package: "mlx-swift")`
-        *   `.product(name: "Tokenizers", package: "swift-tokenizers")`
-        *   `.product(name: "Hub", package: "swift-tokenizers")`
-        *   `"MLXLMCommon"`
-    9.  "In the `mlx_vlm_library_root` directory, run `swift package generate-xcodeproj`."
--   **Verification Command (Agent):** `"In the 'mlx_vlm_library_root' directory, run 'xcodebuild build -scheme mlx_vlm -destination \"platform=OS X\"'. If this fails, check MLX setup or consult https://github.com/ml-explore/mlx-swift.git."` (Ensure the scheme name `mlx_vlm` matches what Xcode generates for your library target).
+        *   `.product(name: "MLXLMCommon", package: "mlx-swift-examples")`,
+        *   `.product(name: "Transformers", package: "swift-transformers")`,
+`
+    9.  "In the `mlx_vlm` directory, run `swift package generate-xcodeproj`."
+-   **Verification Command (Agent):** `"In the 'mlx_vlm' directory, run 'xcodebuild build -scheme mlx_vlm -destination \"platform=OS X\"'. If this fails, check MLX setup or consult https://github.com/ml-explore/mlx-swift.git."` (Ensure the scheme name `mlx_vlm` matches what Xcode generates for your library target).
 
 **Step 1.1: Define Core `VLMModel` Protocol & `VLMError` Enumeration**
 -   **Objective:** Establish the central VLM protocol and error types.
