@@ -8,7 +8,7 @@
 *   **Performance Awareness:** Write efficient code, but don't prematurely optimize. Profile before optimizing.
 *   **Modularity:** Design components with clear responsibilities and well-defined interfaces.
 
-## II. Swift Language Best Practices (Swift 5.7+ / Aiming for Swift 6 Readiness)
+## II. Swift Language Best Practices (Swift 6.0+)
 
 1.  **Type Safety & Inference:**
     *   Leverage type inference but provide explicit types for public APIs or where clarity is improved.
@@ -246,5 +246,14 @@
     *   Strive for clarity at the point of use.
     *   Name functions and methods according to their side-effects.
     *   Use argument labels wisely to improve readability.
+
+13. **Testing:**
+    *   Run tests using the following command:
+        ```bash
+        xcodebuild test -scheme mlx_vlm -destination 'platform=OS X'
+        ```
+    *   Write comprehensive unit tests for public APIs.
+    *   Follow the Arrange-Act-Assert pattern for test structure.
+    *   Test both happy paths and edge cases.
 
 This guide provides a solid foundation. The Swift API Design Guidelines are the ultimate reference. Always prioritize making the code understandable for your future self and your team.
